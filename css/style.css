@@ -164,6 +164,9 @@ main {
     margin: 0 auto;
 }
 
+.logo-link{
+    text-decoration: none;
+}
 .featured-products h2,
 .promotions h2 {
     font-size: 2.5rem;
