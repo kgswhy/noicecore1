@@ -159,32 +159,58 @@ main {
 /* Product Section */
 .featured-products,
 .promotions {
-    padding: 4rem 1rem;
+    padding: 5rem 1.5rem;
     max-width: 1200px;
     margin: 0 auto;
+}
+
+.featured-products h2,
+.promotions h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientFlow 8s ease infinite;
+}
+
+@keyframes gradientFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 .product-grid,
 .promo-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
-    margin: 2rem 0;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2.5rem;
+    margin: 3rem 0;
+    padding: 0.5rem;
 }
 
 .product-card,
 .promo-card {
     background: white;
-    border-radius: 10px;
+    border-radius: 15px;
     overflow: hidden;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-    transition: var(--transition);
+    box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    cursor: pointer;
 }
 
 .product-card:hover,
 .promo-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.product-card:active,
+.promo-card:active {
+    transform: translateY(-2px) scale(0.98);
 }
 
 .product-card img,
@@ -192,9 +218,13 @@ main {
     width: 100%;
     height: 280px;
     object-fit: contain;
-    padding: 1rem;
-    background: #f8f9fa;
-    transition: transform 0.3s ease;
+    padding: 1.5rem;
+    background: linear-gradient(145deg, #f8f9fa, #ffffff);
+    transition: all 0.4s ease;
+}
+
+.product-card:hover img {
+    transform: scale(1.08) rotate(2deg);
 }
 
 .product-card:hover img {
@@ -205,23 +235,62 @@ main {
 .promo-card h3,
 .rating,
 .price {
-    padding: 0.8rem 1.2rem;
+    padding: 0.6rem 1.2rem;
     margin: 0;
+    transition: all 0.3s ease;
 }
 
 .product-card h3 {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     color: var(--primary-color);
+    font-weight: 700;
+    padding-top: 1rem;
+}
+
+.product-card:hover h3 {
+    color: var(--accent-color);
+    transform: translateX(5px);
 }
 
 .product-card .rating {
     font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    opacity: 0.9;
+    padding-top: 0.2rem;
+}
+
+.product-card:hover .rating {
+    transform: scale(1.05);
+    opacity: 1;
 }
 
 .product-card .price {
-    font-size: 1.3rem;
-    font-weight: 600;
+    font-size: 1.4rem;
+    font-weight: 800;
     color: var(--accent-color);
+    position: relative;
+    display: inline-block;
+}
+
+.product-card .price::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 1.2rem;
+    width: 0;
+    height: 2px;
+    background: var(--accent-color);
+    transition: width 0.3s ease;
+}
+
+.product-card:hover .price {
+    transform: translateY(-2px);
+}
+
+.product-card:hover .price::after {
+    width: calc(100% - 2.4rem);
 }
 
 .rating {
