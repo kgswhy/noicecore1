@@ -6,7 +6,7 @@ const products = [
         category: 'headphones',
         price: 'Rp 2.999.000',
         rating: 5,
-        image: './images/headphone-1.png'
+        image: './images/headphone-1.jpg'
     },
     {
         id: 2,
@@ -38,7 +38,7 @@ const products = [
         category: 'headphones',
         price: 'Rp 3.499.000',
         rating: 4.9,
-        image: './images/headphone-2.png'
+        image: './images/headphone-2.jpg'
     },
     {
         id: 6,
