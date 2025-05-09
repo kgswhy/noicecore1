@@ -83,6 +83,10 @@ project/
 - Kode CSS terorganisir dengan baik menggunakan file terpisah untuk setiap halaman
 - JavaScript modular untuk performa yang lebih baik
 
+## Sumber Aset
+- Semua gambar produk dan konten visual diambil dari [Pexels](https://www.pexels.com)
+- Penggunaan gambar sesuai dengan lisensi dan ketentuan Pexels
+
 ## Browser Support
 - Chrome (versi terbaru)
 - Firefox (versi terbaru)
