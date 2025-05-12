@@ -45,6 +45,13 @@
     border-radius: 8px;
     font-size: 1rem;
     transition: var(--transition);
+    line-height: 1.5;
+}
+
+.form-group input:focus {
+    outline: 3px solid #4A90E2;
+    outline-offset: 2px;
+    border-color: #4A90E2;
 }
 
 .form-group input:focus {
@@ -93,6 +100,16 @@
     font-weight: 600;
     cursor: pointer;
     transition: var(--transition);
+    position: relative;
+}
+
+.submit-btn:focus {
+    outline: 3px solid #4A90E2;
+    outline-offset: 2px;
+}
+
+.submit-btn:focus:not(:focus-visible) {
+    outline: none;
 }
 
 .submit-btn:hover {
