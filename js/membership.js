@@ -1,135 +1,206 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('membershipForm');
-    const fields = {
-        name: {
-            element: document.getElementById('name'),
-            error: document.getElementById('nameError'),
-            validate: function(value) {
-                if (!value) return 'Nama tidak boleh kosong';
-                if (value.length < 3) return 'Nama minimal 3 karakter';
-                if (!/^[\p{L} ]+$/u.test(value)) return 'Nama hanya boleh berisi huruf';
-                return '';
-            }
+    const inputs = {
+        name: document.getElementById('name'),
+        email: document.getElementById('email'),
+        gender: document.getElementsByName('gender'),
+        birthdate: document.getElementById('birthdate'),
+        password: document.getElementById('password'),
+        confirmPassword: document.getElementById('confirmPassword'),
+        terms: document.getElementById('terms')
+    };
+
+    const errors = {
+        name: document.getElementById('nameError'),
+        email: document.getElementById('emailError'),
+        gender: document.getElementById('genderError'),
+        birthdate: document.getElementById('birthdateError'),
+        password: document.getElementById('passwordError'),
+        confirmPassword: document.getElementById('confirmPasswordError'),
+        terms: document.getElementById('termsError')
+    };
+
+    // Validation rules
+    const validations = {
+        name: (value) => {
+            if (!value.trim()) return 'Nama harus diisi';
+            if (value.length < 2) return 'Nama minimal 2 karakter';
+            return '';
         },
-        email: {
-            element: document.getElementById('email'),
-            error: document.getElementById('emailError'),
-            validate: function(value) {
-                if (!value) return 'Email tidak boleh kosong';
-                if (!value.includes('@') || !value.includes('.')) return 'Format email tidak valid';
-                return '';
-            }
+        email: (value) => {
+            if (!value) return 'Email harus diisi';
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(value)) return 'Format email tidak valid';
+            return '';
         },
-        gender: {
-            element: document.getElementsByName('gender'),
-            error: document.getElementById('genderError'),
-            validate: function(value) {
-                if (!Array.from(this.element).some(radio => radio.checked)) {
-                    return 'Pilih jenis kelamin';
-                }
-                return '';
-            }
+        gender: (elements) => {
+            const selected = Array.from(elements).some(radio => radio.checked);
+            return selected ? '' : 'Pilih jenis kelamin';
         },
-        birthdate: {
-            element: document.getElementById('birthdate'),
-            error: document.getElementById('birthdateError'),
-            validate: function(value) {
-                if (!value) return 'Tanggal lahir tidak boleh kosong';
-                const birthDate = new Date(value);
-                const today = new Date();
-                const age = today.getFullYear() - birthDate.getFullYear();
-                if (age < 17) return 'Usia minimal 17 tahun';
-                return '';
-            }
+        birthdate: (value) => {
+            if (!value) return 'Tanggal lahir harus diisi';
+            const date = new Date(value);
+            const now = new Date();
+            if (date > now) return 'Tanggal lahir tidak valid';
+            return '';
         },
-        password: {
-            element: document.getElementById('password'),
-            error: document.getElementById('passwordError'),
-            validate: function(value) {
-                if (!value) return 'Password tidak boleh kosong';
-                if (value.length < 8) return 'Password minimal 8 karakter';
-                if (!/[A-Z]/.test(value)) return 'Password harus mengandung huruf besar';
-                if (!/[0-9]/.test(value)) return 'Password harus mengandung angka';
-                return '';
-            }
+        password: (value) => {
+            if (!value) return 'Password harus diisi';
+            if (value.length < 8) return 'Password minimal 8 karakter';
+            if (!/[A-Z]/.test(value)) return 'Password harus mengandung huruf besar';
+            if (!/[a-z]/.test(value)) return 'Password harus mengandung huruf kecil';
+            if (!/[0-9]/.test(value)) return 'Password harus mengandung angka';
+            return '';
         },
-        confirmPassword: {
-            element: document.getElementById('confirmPassword'),
-            error: document.getElementById('confirmPasswordError'),
-            validate: function(value) {
-                if (!value) return 'Konfirmasi password tidak boleh kosong';
-                if (value !== fields.password.element.value) return 'Password tidak cocok';
-                return '';
-            }
+        confirmPassword: (value, password) => {
+            if (!value) return 'Konfirmasi password harus diisi';
+            if (value !== password) return 'Password tidak cocok';
+            return '';
         },
-        terms: {
-            element: document.getElementById('terms'),
-            error: document.getElementById('termsError'),
-            validate: function(value) {
-                if (!this.element.checked) return 'Anda harus menyetujui syarat dan ketentuan';
-                return '';
+        terms: (checked) => {
+            return checked ? '' : 'Anda harus menyetujui syarat dan ketentuan';
+        }
+    };
+
+    // Show error message
+    const showError = (element, message) => {
+        const errorElement = errors[element];
+        if (errorElement) {
+            errorElement.textContent = message;
+            errorElement.classList.add('visible');
+            if (inputs[element].type !== 'radio' && inputs[element].type !== 'checkbox') {
+                inputs[element].classList.add('error');
+                inputs[element].classList.remove('valid');
             }
         }
     };
 
-    // Validasi saat input berubah
-    Object.keys(fields).forEach(fieldName => {
-        const field = fields[fieldName];
-        if (field.element instanceof HTMLElement) {
-            field.element.addEventListener('input', () => {
-                validateField(fieldName);
+    // Hide error message
+    const hideError = (element) => {
+        const errorElement = errors[element];
+        if (errorElement) {
+            errorElement.textContent = '';
+            errorElement.classList.remove('visible');
+            if (inputs[element].type !== 'radio' && inputs[element].type !== 'checkbox') {
+                inputs[element].classList.remove('error');
+                inputs[element].classList.add('valid');
+            }
+        }
+    };
+
+    // Validate single field
+    const validateField = (field) => {
+        let value;
+        let isValid = true;
+
+        switch(field) {
+            case 'gender':
+                value = inputs[field];
+                const genderError = validations[field](value);
+                if (genderError) {
+                    showError(field, genderError);
+                    isValid = false;
+                } else {
+                    hideError(field);
+                }
+                break;
+            case 'terms':
+                value = inputs[field].checked;
+                const termsError = validations[field](value);
+                if (termsError) {
+                    showError(field, termsError);
+                    isValid = false;
+                } else {
+                    hideError(field);
+                }
+                break;
+            case 'confirmPassword':
+                value = inputs[field].value;
+                const confirmError = validations[field](value, inputs.password.value);
+                if (confirmError) {
+                    showError(field, confirmError);
+                    isValid = false;
+                } else {
+                    hideError(field);
+                }
+                break;
+            default:
+                value = inputs[field].value;
+                const error = validations[field](value);
+                if (error) {
+                    showError(field, error);
+                    isValid = false;
+                } else {
+                    hideError(field);
+                }
+        }
+
+        return isValid;
+    };
+
+    // Add input event listeners for real-time validation
+    Object.keys(inputs).forEach(field => {
+        if (field === 'gender') {
+            inputs[field].forEach(radio => {
+                radio.addEventListener('change', () => validateField(field));
             });
+        } else if (inputs[field]) {
+            inputs[field].addEventListener('input', () => validateField(field));
+            inputs[field].addEventListener('blur', () => validateField(field));
         }
     });
 
-    // Fungsi validasi per field
-    function validateField(fieldName) {
-        const field = fields[fieldName];
-        const value = field.element instanceof HTMLElement ? field.element.value : '';
-        const errorMessage = field.validate(value);
-        field.error.textContent = errorMessage;
+    // Password strength indicator
+    const updatePasswordStrength = (password) => {
+        const strengthBar = document.querySelector('.password-strength-bar');
+        if (!strengthBar) return;
 
-        if (errorMessage) {
-            field.element instanceof HTMLElement && field.element.classList.add('error');
-            field.element instanceof HTMLElement && field.element.classList.remove('valid');
-            return false;
-        } else {
-            field.element instanceof HTMLElement && field.element.classList.remove('error');
-            field.element instanceof HTMLElement && field.element.classList.add('valid');
-            return true;
-        }
+        let strength = 0;
+        if (password.length >= 8) strength++;
+        if (/[A-Z]/.test(password)) strength++;
+        if (/[a-z]/.test(password)) strength++;
+        if (/[0-9]/.test(password)) strength++;
+        if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+        strengthBar.className = 'password-strength-bar';
+        if (strength >= 4) strengthBar.classList.add('strength-strong');
+        else if (strength >= 2) strengthBar.classList.add('strength-medium');
+        else if (strength >= 1) strengthBar.classList.add('strength-weak');
+    };
+
+    if (inputs.password) {
+        inputs.password.addEventListener('input', (e) => {
+            updatePasswordStrength(e.target.value);
+        });
     }
 
-    // Handle form submission
-    form.addEventListener('submit', function(e) {
+    // Form submission
+    form.addEventListener('submit', (e) => {
         e.preventDefault();
         let isValid = true;
 
-        // Validasi semua field
-        Object.keys(fields).forEach(fieldName => {
-            if (!validateField(fieldName)) {
+        // Validate all fields
+        Object.keys(validations).forEach(field => {
+            if (!validateField(field)) {
                 isValid = false;
             }
         });
 
         if (isValid) {
-            // Simulasi pengiriman data
+            // Show success message
             const successMessage = document.createElement('div');
             successMessage.className = 'success-message';
-            successMessage.textContent = 'Pendaftaran berhasil! Anda akan diarahkan ke halaman member.';
-            form.insertBefore(successMessage, form.firstChild);
-            successMessage.style.display = 'block';
+            successMessage.textContent = 'Pendaftaran berhasil! Anda akan diarahkan ke halaman login.';
+            document.body.appendChild(successMessage);
 
-            // Reset form setelah berhasil
             setTimeout(() => {
-                form.reset();
-                Object.keys(fields).forEach(fieldName => {
-                    const field = fields[fieldName];
-                    if (field.element instanceof HTMLElement) {
-                        field.element.classList.remove('valid');
-                    }
-                });
-                window.location.href = 'index.html';
+                successMessage.classList.add('show');
+            }, 100);
+
+            setTimeout(() => {
+                // Here you would typically submit the form data to your server
+                // For now, we'll just redirect to a success page
+                window.location.href = 'login.html';
             }, 2000);
         }
     });
