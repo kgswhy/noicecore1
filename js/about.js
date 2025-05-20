@@ -20,10 +20,14 @@ const observer = new IntersectionObserver(handleIntersection, observerOptions);
 // Menambahkan observer ke semua section dan timeline items
 document.addEventListener('DOMContentLoaded', () => {
     // Mengamati sections
-    const sections = document.querySelectorAll('.mission-section, .values-section, .history-section');
+    const sections = document.querySelectorAll('.mission-section, .values-section, .history-section, .team-section');
     sections.forEach(section => observer.observe(section));
 
     // Mengamati timeline items
     const timelineItems = document.querySelectorAll('.timeline-item');
     timelineItems.forEach(item => observer.observe(item));
+    
+    // Mengamati team members
+    const teamMembers = document.querySelectorAll('.team-member');
+    teamMembers.forEach(member => observer.observe(member));
 });
